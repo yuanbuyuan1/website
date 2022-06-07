@@ -17,15 +17,13 @@ terraform使用了[HCL](https://www.terraform.io/language/syntax/configuration)�
 支持以`go`等语言的方式编写。
 ![tf_sdk](https://mktg-content-api-hashicorp.vercel.app/api/assets?product=terraform-cdk&version=refs%2Fheads%2Fstable-website&asset=website%2Fdocs%2Fcdktf%2Fterraform-platform.png&width=1776&height=1317)
 
-
 pulumi 主要使用`go`,`typescript`等编程语言来编写基础设施管理代码。通过stack来区分不同的基础设施，可以理解为类似GitHub branch的方式来管理不同的开发环境。
 ![plu_sdk](https://www.pulumi.com/images/docs/pulumi-programming-model-diagram.svg)
 
-
 对于`HCL`语法会有上手的难度，所以对于开发人员来说不太友好，其次是有些基础设施代码的复用更贴合开发人员的习惯。
 `pulumi`的优势在于通过代码的方式减少了入门的难度，笔者对于未来的方向来说是以类似`go`等语言的方式为主，类似于`k8s`中`yaml`配置到
-`operator`配置的一个转变。这里有一个笔者的观念：传统意义上的运维和测试在云原生的开发上是不太使用的，应该将测试和运维都看作一个开发
-领域，如领域驱动设计中说的一样，也应该将运维（基础设施）开发算作一个领域，运用领域驱动设计中的设计方法来将设计和开发运维中的应用。
+`operator`配置的一个转变。这里有一个笔者的观念：传统意义上的运维和测试在云原生的开发上是不太使用的，应该将测试和运维都看作一个开发领域，
+也应该将运维（基础设施）开发算作一个开发的域，运用程序设计方法和领域驱动设计来开发基础设施应用。
 
 
 # pulumi aws 配置
