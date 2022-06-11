@@ -441,6 +441,18 @@ if installMOCluster || installOp {
 
 ```
 
+
+# 跨区域集群创建
+
+跨区域或者跨云创建集群是需要有一个控制平面（如`rancher`, `crossplane`，`kubefed`)这种，
+同时在跨集群调度的时候需要考虑异构计算，网络配置等问题。
+
+
+[aws 联邦集群方案](https://github.com/awslabs/federated-amazon-eks-clusters-on-aws)
+
+![aws_federated](https://github.com/awslabs/federated-amazon-eks-clusters-on-aws/raw/master/source/images/architecture.png)
+
+
 # 全部代码
 
 
