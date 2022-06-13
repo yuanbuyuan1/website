@@ -2,7 +2,297 @@
 title: github workflow 使用
 date: '2022-06-12'
 tags: ['github action', 'ci/cd', 'mergify', 'golangci-lint', 'composite']
-draft: true
+draft: false
 summary: 'In this article we introduce github workflow with github action'
 authors: ['Wang Lei']
 ---
+
+# github workflow 简介
+
+`github workflow`主要是以`github action`为主组成的`ci/cd`管道,文件路径为`.github/workflows`.
+
+## 测试环境设置
+
+这里主要做了两件事情，将环境变量加入到当前的环境中，二是设置golang环境（同理也可以设置其他的环境）。
+将预先需要的环境准备好可以确保测试环境的一致性，这也是测试中重要的一点控制变量。其中环境变量的配置文件
+路径为`.github/env`
+
+`env`示例
+```
+golang-version: 1.18.2
+```
+
+```yaml
+name: pre_env
+description: "prepare testing env"
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: import env variables
+      shell: bash
+      run: cat ".github/env" >> $GITHUB_ENV
+
+    - name: setup go version
+      uses: actions/setup-go@v3
+      with:
+        go-version:
+          ${{ env.golang-version }}
+```
+
+
+## 检查
+
+这里可以做一些静态检查(golangci-lint)和许可证检查(apache/skywalking-eyes)
+
+```yaml
+name: checks
+description: "check license header"
+inputs:
+  github_token:
+    descirption: "Github Token"
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: pre_env
+      uses: ./.github/actions/dev_env
+
+    - name: check_license_header
+      uses: apache/skywalking-eyes@main
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+      with:
+        log: info
+        config: .github/licenserc.yml
+
+    - name: golangci_lint
+      uses: golangci/golangci-lint-action@v3.1.0
+      with:
+        version: v1.45.3
+        args: --timeout 10m0s
+```
+
+`licenserc.yml`配置示例
+
+```yaml
+header:
+  license:
+    spdx-id: Apache-2.0
+    copyright-owner: Matrix Origin
+  paths-ignore:
+    - 'docs/'
+  comment: on-failure
+```
+
+`golangci-lint.yml`配置示例
+
+```yaml
+run:
+  timeout: 30m
+  go: '1.18'
+  skip-files:
+    - "^zz_generated.*"
+
+output:
+  sort-results: true
+
+linters:
+  disable-all: true
+  enable:
+    - revive
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+
+linters-settings:
+  staticcheck:
+    go: "1.18"
+    checks: [
+      "all",
+      "-S1*",
+      "-ST1*",
+      "-SA5011",
+      "-SA1019",
+      "-SA2002"
+    ]
+```
+
+## workflow 组合示例
+
+```yaml
+name: test_workflows
+
+on:
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event-name }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/checks
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+
+  build_binary:
+    runs-on: ${{ matrix.os }}
+    needs: checks
+    name: build_binary_test
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: build_binary
+        uses: ./.github/actions/build_binary
+```
+
+## mergify 配置示例
+
+```yaml
+queue_rules:
+  - name: shared_queue
+    conditions:
+      # Must write expected checks explicitly
+      # Reference: https://docs.mergify.com/conditions/#validating-all-status-checks
+      - check-success=e2e_kind_test
+      - check-success=helm_pkg_check
+
+pull_request_rules:
+  - name: put pr to queue
+    conditions:
+      - "#approved-reviews-by>=1"
+      - "#review-requested=0"
+      - "#changes-requested-reviews-by=0"
+    actions:
+      queue:
+        name: shared_queue
+        method: squash
+
+  - name: ping author on conflicts
+    conditions:
+      - conflict
+    actions:
+      comment:
+        message: |
+          This pull request has merge conflicts that must be resolved before it can be merged. @{{author}} please update it.
+          Try `@mergify update` or update manually.
+  - name: Notify author on queue failure
+    conditions:
+      - 'check-failure=Queue: Embarked in merge train'
+    actions:
+      comment:
+        message: >
+          Hey @{{ author }}, this pull request failed to merge and has been
+          dequeued from the merge train.  If you believe your PR failed in
+          the merge train because of a flaky test, requeue it by commenting
+          with `@mergifyio requeue`.
+          More details can be found on the `Queue: Embarked in merge train`
+          check-run.
+  - name: Welcome new contributor
+    conditions:
+      - author!=Mergify
+    actions:
+      comment:
+        message: |
+          Thanks for the contribution!
+          Please review the labels and make any necessary changes.
+
+  - name: PR label to need-review
+    conditions:
+      - check-success=e2e_kind_test
+      - check-success=helm_pkg_check
+      - label!=reviewed
+    actions:
+      label:
+        add:
+          - need-review
+
+  - name: label on reviewed
+    conditions:
+      - "approved-reviews-by>=1"
+      - "#review-requested=0"
+      - "#changes-requested-reviews-by=0"
+      - label=need-review
+    actions:
+      comment:
+        message: "@{{ author }} this pull request is reviewed"
+      label:
+        add:
+          - reviewed
+        remove:
+          - need-review
+
+  - name: label on Feature
+    conditions:
+      - body~=(?m)- \[(?i)x\] Feature
+    actions:
+      label:
+        add:
+          - feature
+
+  - name: label on Bug Fix
+    conditions:
+      - body~=(?m)- \[(?i)x\] Bug
+    actions:
+      label:
+        add:
+          - bug
+
+  - name: label on Improvement
+    conditions:
+      - body~=(?m)^- \[(?i)x\] Improvement
+    actions:
+      label:
+        add:
+          - improvement
+
+  - name: label on Test and CI
+    conditions:
+      - body~=(?m)^- \[(?i)x\] Test and CI
+    actions:
+      label:
+        add:
+          - test-ci
+
+  - name: label on Code Refactoring
+    conditions:
+      - body~=(?m)^- \[(?i)x\] Code Refactoring
+    actions:
+      label:
+        add:
+          - code-refactoring
+
+  - name: label on Documentation
+    conditions:
+      - body~=(?m)^- \[(?i)x\] Documentation
+    actions:
+      label:
+        add:
+          - doc
+
+  - name: label on API-change
+    conditions:
+      - body~=(?m)- \[(?i)x\] API-change
+    actions:
+      label:
+        add:
+          - api-change
+```
