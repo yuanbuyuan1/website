@@ -7,7 +7,31 @@ summary: 'In this article we introduce kubernetes client'
 authors: ['Wang Lei']
 ---
 
-# k8s client-go
+# Extending kubernetes
+
+[kubernetes glossary](https://kubernetes.io/docs/reference/glossary/?fundamental=true)的统一定义
+
+## 控制器(controller)
+
+控制器实现了一个控制回路，通过API服务器观察集群的共享状态，并做出更改，试图将当前状态移到所需状态
+
+- 控制器可以作用于核心资源（如`deployment`或者`service`), 一般作为控制平面（control plane)的`k8s controller mananger`一部分， 或者
+查看和操作用户自定义的资源
+- operator是一种编码（encode）一些操作知识（operational knowledge)的控制器, 如管理应用的生命周期
+
+## 控制回路（control_loop)
+
+![control_loop](../../public/static/images/control_loop.png)
+
+### Informers
+
+`Informers`以可扩展和可持续的方式所需的资源状态，实现了一个强制定期协调的同步机制。也用于确保集群状态和缓存在内存中的假定状态不发生漂移
+
+### 工作队列（work queue)
+
+ccfc
+
+# Kubernetes client-go
 
 [client-go](https://github.com/kubernetes/client-go) is go client for talking to a kubernetes cluster.
 
@@ -29,3 +53,13 @@ metav1.AddToGroupVersion(Scheme, schema.GroupVersion{Group: "matrixone.matrixori
 - Kind: 资源种类
 
 ![group](../../public/static/images/group.png)
+
+k8s有很多的资源，每一种资源类型都需要有一个统一的注册、存储、
+查询、管理等机制。k8s中所有资源类型都已注册到sheme资源注册表中，特点如下：
+
+- 支持注册多种资源类型，包括内部版本和外部版本
+- 支持多种版本转换机制
+- 支持不同资源的序列化/反序列化机制
+
+
+[sheme](https://github.com/kubernetes/apimachinery/blob/master/pkg/runtime/scheme.go)资源注册表支持两种资源类型（Type）的注册，分别是UnverionedType和KnownType资源类型
