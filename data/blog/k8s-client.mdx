@@ -2,7 +2,7 @@
 title: kubernetes client ( informers listers and clientset)
 date: '2022-06-14'
 tags: ['kubernetes', 'operator', 'client-go', 'informers']
-draft: true
+draft: false
 summary: 'In this article we introduce kubernetes client'
 authors: ['Wang Lei']
 ---
@@ -10,3 +10,22 @@ authors: ['Wang Lei']
 # k8s client-go
 
 [client-go](https://github.com/kubernetes/client-go) is go client for talking to a kubernetes cluster.
+
+client-go是一个用于开发kubernets的工具, 可以用于扩展基础的k8s功能。
+
+## scheme
+
+资源的管理和迭代主要依靠`group`和`version`的概念
+
+`GroupVerison`可以用于在operator中可以通过`k8s.io/apimachinery/pkg/runtime/schema`这里配置
+
+```go
+metav1.AddToGroupVersion(Scheme, schema.GroupVersion{Group: "matrixone.matrixorigin.cn", Version: "v1alpha1"})
+```
+
+- Group: 资源组
+- Version：资源版本
+- Resource：资源
+- Kind: 资源种类
+
+![group](../../public/static/group.png)
