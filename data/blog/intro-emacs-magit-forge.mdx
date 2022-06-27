@@ -1,0 +1,156 @@
+---
+title: emacs magit 使用
+date: '2022-06-18'
+tags: ['emacs', 'magit', 'forge', 'use-package']
+draft: false
+summary: 'In this article we introduce how to use emacs magit.'
+authors: ['Wang Lei']
+---
+
+# emacs magit 配置
+
+- [magit](https://magit.vc/)是一个`git`工具，提供类似`commit`, `pull`, `push`等功能。
+- [libgit](https://libgit2.org/)是一个`c`实现的git的核心功能的库，可以编写自定义的`git`
+应用。
+- [magit-libgit](https://github.com/magit/magit/blob/master/lisp/magit-libgit.el)通过`libgit`
+实现特定的功能。
+- [magit forge](https://github.com/magit/forge)提供了对于repo的`pull request`, 'issue`的管理功能，
+比如创建`issue`, 合并`pull request`等功能。
+- [git-messenger](https://github.com/emacsorphanage/git-messenger)弹出当前行的最后一次提交记录
+- [git-timemachine](https://melpa.org/#/git-timemachine)遍历文件的`git`的提交记录
+
+一个简单的`magit`配置:
+
+```lisp
+(use-package magit
+:ensure t
+:diminish magit-autorevert-mode
+:diminish auto-revert-mode
+:config
+(defun pt/commit-hook () (set-fill-column 80))
+(add-hook 'git-commit-setup-hook #'pt/commit-hook)
+(add-to-list 'magit-no-confirm 'stage-all-changes)
+:bind (
+  ("C-c x c" . magit-commit)
+  ("C-c x p" . magit-push)
+  ("C-c x l" . magit-log)
+  ("C-c x n" . magit-clone)
+  ("C-c x b" . magit-branch-create)
+  ("C-c x d" . magit-branch-delete)
+  ("C-c x r" . magit-branch-reset)
+  ("C-c x o" . magit-checkout)
+  ("C-c x s" . magit-stash)
+  ("C-c x g" . magit-status)
+  ("C-c x u" . magit-pull)
+  ("C-c x y" . magit-branch-checkout)
+))
+
+(use-package forge
+:ensure t
+:after magit
+:bind (
+   ("C-c v p" . forge-pull)
+   ("C-c v i" . forge-list-issues)
+   ("C-c v r" . forge-list-pullreqs)
+ ))
+
+;; hack to eliminate weirdness
+(unless (boundp 'bug-reference-auto-setup-functions)
+  (defvar bug-reference-auto-setup-functions '()))
+
+
+(use-package libgit
+:ensure t
+:after magit)
+(use-package magit-libgit
+:ensure t
+:after (magit libgit))
+
+
+(use-package git-messenger
+:ensure t
+:bind ("C-c x m" . git-messenger:popup-message)
+:config
+(setq git-messenger:show-detail t
+      git-messenger:use-magit-popup t))
+
+(use-package git-timemachine
+:ensure t
+:bind ("C-c x t" . git-timemachine))
+```
+# forge 配置
+
+介绍forge的基本配置，以github为例
+
+## github token
+
+创建`github accesss token`的设置在`Setting --> Developer settting --> Personal access token`下面，需要配置好权限。
+
+
+个人设置
+
+![setting](/static/images/magit/1.png)
+
+开发者设置
+
+![developer_settting](/static/images/magit/2.png)
+
+访问密钥
+
+![access_token](/static/images/magit/3.png)
+
+访问权限
+
+![permissions](/static/images/magit/4.png)
+
+
+## 配置access token
+
+配置在`~/.authinfo`文件里, `<GITHUB_USER>`是配置的github的用户名。
+可以通过`git config --global github.user <GITHUB_USER>`的方式全局配置。
+
+```示例配置
+machine api.github.com login <GITHUB_USER>^forge password <TOKEN>
+```
+
+## forge 示例
+
+所有的命令
+
+![forge](/static/images/magit/5.png)
+
+### 以创建一个`issue`为例
+
+1. 首先要将当前的`repo`加入到`forge`的数据中，forege在本地以`sqlite`数据库(`forge-database.sqlite`)管理数据,
+
+
+命令：forge-add-repository
+
+
+2. 拉去repo数据
+
+
+命令： forge-pull
+
+
+3. 查看所有issue
+
+
+命令： forge-list-issues
+
+
+4. 创建issue
+
+![issue](/static/images/magit/6.png)
+
+
+编写`issue comment`,`C-c C-c`完成编辑
+
+
+![create](/static/images/magit/7.png)
+
+5. 显示
+
+在网页上的显示
+
+![show](/static/images/magit/8.png)
