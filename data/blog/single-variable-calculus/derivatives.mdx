@@ -1,0 +1,64 @@
+---
+title: Single variable calculus 1 - Derivatives
+date: '2022-06-25'
+tags: ['math', 'calculus']
+draft: false
+summary: 'Introduction to single variable calculus: derivatives'
+authors: ['Wang Lei']
+---
+
+## Question
+
+1. What is a derivatives?
+
+2. How to differentiate any function?
+
+
+## Geometric definition of the derivatives
+
+A derivative is an idea of approximation
+
+![d-1](/static/images/calculus/d-1.png)
+
+approximation: `p <--> Q`
+
+Geometric definition
+
+![d-2](/static/images/calculus/d-2.png)
+
+infinite approximation means: $$\Delta x \to 0$$
+
+$$
+\lim_{\Delta x \to 0}\frac{\Delta f}{\Delta x}
+= \lim_{\Delta x \to 0}\frac{f(x_0 + \Delta x) - f(x_0)}{\Delta x}
+= f'(x_0)
+$$
+
+### Example 1
+
+$$
+f(x) = \frac{1}{x}
+$$
+
+**Derivative**:
+
+$$
+
+\lim_{\Delta x \to 0}\frac{\Delta f}{\Delta x}
+= \lim_{\Delta x \to 0}\frac{\frac{1}{x + \Delta x} - \frac{1}{x}}{\Delta x}
+= \lim_{\Delta x \to 0}\frac{x - (x + \Delta x)}{x \Delta x (x + \Delta x)}
+= \lim_{\Delta x \to 0} - \frac{1}{x(x + \Delta x)}
+$$
+
+Take the *limit* as $\Delta \to 0$,
+
+$$
+\lim_{\Delta x \to 0} - \frac{x}{x(x + \Delta x)}
+= - \frac{1}{x^2}
+$$
+
+Hence,
+
+$$
+f'(x) = - \frac{1}{x^2}
+$$
