@@ -4,8 +4,12 @@ date: '2022-06-18'
 tags: ['emacs', 'magit', 'forge', 'use-package']
 draft: false
 summary: 'In this article we introduce how to use emacs magit.'
-authors: ['Wang Lei']
+canonicalUrl: https://github.com/wanglei4687/website/blob/main/data/blog/emacs/intro-emacs-magit-forge.mdx
 ---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 简介
 
 - [magit](https://magit.vc/)是一个`git`工具，提供类似`commit`, `pull`, `push`等功能。
 - [libgit](https://libgit2.org/)是一个`c`实现的git的核心功能的库，可以编写自定义的`git`
@@ -76,11 +80,11 @@ authors: ['Wang Lei']
 :ensure t
 :bind ("C-c x t" . git-timemachine))
 ```
-# forge 配置
+## forge 配置
 
 介绍forge的基本配置，以github为例
 
-## github token
+### github token
 
 创建`github accesss token`的设置在`Setting --> Developer settting --> Personal access token`下面，需要配置好权限。
 
@@ -102,7 +106,7 @@ authors: ['Wang Lei']
 ![permissions](/static/images/magit/4.png)
 
 
-## 配置access token
+### 配置access token
 
 配置在`~/.authinfo`文件里, `<GITHUB_USER>`是配置的github的用户名。
 可以通过`git config --global github.user <GITHUB_USER>`的方式全局配置。
