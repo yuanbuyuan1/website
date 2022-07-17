@@ -1,0 +1,107 @@
+---
+title: '论文 SingleStore (SIGMOD 2022)'
+date: '2022-07-05'
+lastmod: ''20222-07-17'
+tags: ['htap', 'database']
+draft: false
+summary: 'Cloud-Native Transactions and Analytics in SingleStore'
+canonicalUrl: https://github.com/wanglei4687/website/blob/main/data/blog/papers/singlestore.mdx
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+[SingleStore](https://www.singlestore.com/) (S2DB)以前是[MemSQL](https://github.com/memsql)
+
+DOI: https://doi.org/10.1145/3514221.3526055
+
+## Introduction
+
+首先介绍了数据库的几种负载
+
+- 事务（transaction processing)
+- 数仓（data warehousing）
+- 时间序列分析（time series analysis)
+- 全文检索（full-text search）
+- 数据湖 （data lakes）
+- 内存缓存（in-memory caching)
+- 文档存储（document storage）
+- 队列（queuing）
+- 图处理（graph processing）
+- 异地复制（geo-replicated）
+
+🧐从我的角度来说流是一个很重要的方向，其实`HTAP`的处理也可以看作是在流上做分析和处理。数据湖(`iceberg`, `hudi`等)这里的问题还是在与处理`update`操作消耗很大，
+其中数据湖对于`TP`的性能支持也会有很大的开发难度。异地复制主要的问题在于延迟的问题，即使通过类似`SD-WAN`、`RDMA`等技术直连。
+
+下图就是`azure`的异地复制的典型配置。
+
+![s2db01](/static/images/s2db/s2db01.png)
+
+了解这个数据库也是应为它与我司开发的超融合数据库有借鉴意义，对于不同的负载实际过程中怎么调度是个很难的问题（特别是考虑到云上环境的问题）。
+
+数据库发展趋势：
+
+1. 云原生架构的设计利用了弹性云基础设施
+
+   对象存储（`s3`, `blob`)和弹性块存储(EBS)允许数据库利用几乎无限的、高可用的和持久的数据存储。
+
+2. 数据量的增加，并希望以更低的延迟和更高的吞吐访问
+
+S2DB通过将冷数据放入blob存储（或S3)存储和智能的使用本地状态（local state）来减少网络的消耗，这样可以支持更加广泛的工作负载，`iceberg`这种也是建立在`s3 `上的存储引擎。可以方便的利用`S3`的可靠性和经济性。
+
+
+### 计算和存储分离（Separation of storage and compute）
+
+S2DB可以通过数据热度来使用不同的存储（本地内存，本地磁盘和S3/blob 存储）
+
+1. 冷数据存储在blob存储中，而本地存储保存更多最近的查询数据
+
+2. 在blob存储中保留存储的历史（可以包括删除的数据），可以支持从任意时间点恢复数据，但不用显式备份和复制任何数据
+
+3. 可以从blob储存中支持多个只读副本，而不影响数据库的读写主副本。
+
+### 统一表存储（Unified table storage）
+
+`OLAP`和`OLTP`都使用统一的表存储，避免`HTAP`的表的转换。
+
+
+## S2DB背景
+
+S2DB是`horizontally-partitioned`, `shared-nothing`的数据库。分为两个部分
+
+- **Aggregator nodes** 协调查询（plan，parse）
+- **Leaf nodes** 保存数据分区副本，处理查询的计算
+
+每个leaf node都保留几个数据分区，每个分区要么是一个主分区，它可以同时服务于读写，要么是一个副本，它只能服务于读。
+
+
+shard key（分区键）: 一组用户可配置列进行哈希分区（shard key），表可以实现跨分区分布。有利于更快地执行点读（`point reads`)查询和`sharp query`也不用在leaves之间移动数据。
+当执行`join`和`group by`操作的时候匹配它们引用的表的`shard key`，S2DB下推（push down）执行到各自的分区以避免数据的移动。S2DB还支持通过中间字节码生成针对LLVM的完整查询代码。可以瞅瞅另一篇文章[shard key](https://website-wanglei4687.vercel.app/blog/database/shard-key)
+
+![s2db02](/static/images/s2db/s2db02.png)
+
+S2DB通过在集群中的不同节点上存储每个分区的多个副本来维护高可用性(HA)。默认情况下，当事务在主分区上提交时，数据会同步复制到副本，读操作不会运行在HA的副本上。
+
+
+### 表格式存储
+
+内存中的行存依靠[无锁的跳表](http://www.cse.yorku.ca/~ruppert/papers/lfll.pdf)
+
+#### 行存储
+
+S2DB内存行存储表中的每个索引都使用一个无锁的跳表来索引行。
+跳表中的一个节点对应于一行，每个节点存储行版本的链接列表，以实现多版本并发控制，以便读取操作不需要等待写入操作。
+
+写操作使用悲观并发控制，使用存储在每个跳表节点上的行锁实现，以处理对同一行的并发写操作。
+
+
+### 列存储
+
+列存储表中的数据被组织成段（segment），其中每个段将不相交的行子集（disjoint subset of rows as a set ）存储为磁盘上的一组数据文件。
+在一个段中，每个列都按相同的行顺序存储，但分别进行压缩。段元数据存储在一个持久的内存行存储表中，包含文件位置、编码和每个列的最小/最大值等信息。
+如果指定，每个段中的行都是完全按照排序键排序的。段之间的排序顺序类似于LSM树 （log-structed-merge tree)。
+
+## 存算分离（Separation of storage and compute）
+
+数据的存储分两个阶段，第一个阶段是暂存数据到本地盘，第二个阶段是异步刷到对象存储（blob storage）。
+
+![s2db03](/static/images/s2db/s2db03.png)
