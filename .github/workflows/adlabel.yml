@@ -17,70 +17,70 @@ jobs:
           labels: |
             action/merge
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/blog') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             type/blog
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/paper') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             type/paper
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/project') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             type/project
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/reading') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             type/reading
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/lang-go') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             language/go
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/lang-rust') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             language/rust
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/lang-python') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             language/python
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/ml') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             part/machine-learning
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/db') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             part/database
 
-      - uses: action-ecosystem/action-add-labels@v1
+      - uses: actions-ecosystem/action-add-labels@v1
         if: ${{ startsWith(github.event.comment.body, '/math') }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
