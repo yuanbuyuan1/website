@@ -1,0 +1,16 @@
+version: 1
+labels:
+  - label: "type/reading"
+    title: "^READING.*"
+  - label: "type/paper"
+    title: "^PAPER.*"
+  - label: "type/project"
+    title: "^PROJECT.*"
+  - label: "type/course"
+    title: "^COURSE.*"
+  - label: "type/blog"
+    title: "BLOG.*"
+  - label: "type/refactor"
+    title: "REFACTOR.*"
+  - label: "type/feature"
+    title: "FEATURE.*"

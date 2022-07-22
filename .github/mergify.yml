@@ -1,0 +1,13 @@
+queue_rules:
+  - name: w_queue
+    conditions:
+      - "label=action/merge"
+
+pull_request_rules:
+  - name: put pr to queue
+    conditions:
+      - "label=action/merge"
+    actions:
+      queue:
+        name: w_queue
+        method: squash
