@@ -22,3 +22,6 @@
 - name: "type/perf"
   color: "7902D4"
   description: "perf type"
+- name: "action/merge"
+  color: "4DF574"
+  description: "merge action for trigger mergify"
