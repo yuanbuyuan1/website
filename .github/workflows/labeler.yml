@@ -3,6 +3,8 @@ name: labeler
 on:
   pull_request:
     types: [opened, edited]
+  issues:
+    types: [opened, edited]
 
 jobs:
   labeler:
