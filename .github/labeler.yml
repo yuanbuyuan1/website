@@ -32,3 +32,5 @@ labels:
     title: "^test.*"
   - label: "component/doc"
     title: "^doc.*"
+  - label: "type/design"
+    titile: "^design.*"

@@ -86,3 +86,10 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: |
             part/mathematics
+
+      - uses: actions-ecosystem/action-add-labels@v1
+        if: ${{ startsWith(github.event.comment.body, '/design') }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: |
+            type/design

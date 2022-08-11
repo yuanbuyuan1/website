@@ -25,3 +25,6 @@
 - name: "action/merge"
   color: "4DF574"
   description: "merge action for trigger mergify"
+- name: "type/design"
+  color: "DBBC60"
+  description: "software design or architecture design"
