@@ -12,8 +12,7 @@ jobs:
         uses: cgetc/automatically-set-milestone-to-issue@v0.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          version-prefix: "w"
-          version-separator: "."
+          version-prefix: "w-"
 
       - name: add issue to project
         uses: actions/add-to-project@v0.3.0
