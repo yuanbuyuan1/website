@@ -1,0 +1,21 @@
+name: milestone
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  assign-milestone:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ass issue to latest milestone
+        uses: cgetc/automatically-set-milestone-to-issue@v0.1.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version-prefix: "w-"
+
+      - name: add issue to project
+        uses: actions/add-to-project@v0.3.0
+        with:
+          project-url: https://github.com/users/wanglei4687/projects/6
+          github-token: ${{ secrets.PERSON  }}
