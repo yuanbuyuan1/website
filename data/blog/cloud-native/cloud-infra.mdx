@@ -1,0 +1,29 @@
+---
+title: 云基础设施的一些看法
+date: '2022-09-08'
+lastmod: '20222-09-08'
+tags: ['cloud', 'infrastructure']
+draft: false
+summary: 'introduction to cloud infrastructure'
+canonicalUrl: https://github.com/wanglei4687/website/blob/main/data/blog/papers/cloud-native/cloud-infra.mdx
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## 云基础设施
+
+这里的设施可以当作是完成一个任务所需要的原料，对于机器学习类型的负载来说是数据（原料）和GPU（加工厂），
+这里云上会提供比较高的网络带宽和GPU算力，可以达到用完销毁的效果。 IaaS, Saas和PaSS面对的需求也是不同的，
+从最近的看到一些项目来看，是需要提供一个控制平面来管理很多的基础设施的，类似与[crossplane](https://github.com/crossplane/crossplane)。
+需要深化一下`crossplane`的能力以提供更好的服务。提供更多的控制器来对任务的状态进行管理。
+
+## 对花销的感知
+
+对于资源的消耗（钱和算力）是需要在runtime的阶段去做的，通过对于CSI，CNI，CRI的扩展插件来感知底层资源消耗
+从而知道花了多少的钱在什么地方。
+
+## reconcile
+
+其实调谐也可以看作是一种REST服务，那开发对于各种资源的调谐微服务是不是也是可行的，控制器（controller）的控制粒度更加细化，
+是不是调优和开发也会更加逻辑清晰一些？是不是也可以理解为一种调度算法之类的。
