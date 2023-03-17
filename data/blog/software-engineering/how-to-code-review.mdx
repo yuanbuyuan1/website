@@ -1,0 +1,173 @@
+---
+title: 如何做代码审查
+date: '2022-07-24'
+lastmod: '2022-07-24'
+tags: ['code-review', 'software-engineering']
+draft: false
+summary: 'how to do code review'
+canonicalUrl: https://github.com/wanglei4687/website/blob/main/data/blog/software-engineering/how-to-code-review.mdx
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## Introduction
+
+**Modern code review** is
+
+- informal (in constrast to Fagan-style)
+- tool-based
+- asyncchronous
+- focused on reviewing code changes
+
+## BACKGROUND AND RELATED WORK
+
+Master branch after explicit approval from reviews and automated verification that the changes does not break the build.
+
+Allow reviewers to "take over" a change and commit it themselves and provides hooks for automatic static analysis or continuous
+build/test integration.
+
+
+### Pull-based development model.
+
+1. fork an existing git repository
+
+2. make changes in fork
+
+3. take a pull request for the project in question
+
+4. visible to anyone who can see the project
+
+
+### Covergent Practices in Code Review
+
+
+**Covergent review practices**
+
+1. Contemporary peer review follows a lightweight, flexible process.
+
+2. Reviews happen early (before a change is committed, quickly, and frequently)
+
+3. Change sizes are small
+
+4. Two reviewers find an optimal number of defects
+
+5. Review has changed from a defect finding activity to a group problem solving activity
+
+
+Force developers to write code that other developers could understand
+
+
+**Additinoal Benefits**
+
+- checking the consistency of style and design
+
+- ensuring adequate tests
+
+- improving security by making sure no single developer can commit arbitrary code without oversight
+
+
+## Current expectations
+
+**What Google developers expect form code review**
+
+- education
+
+- maintaining norms
+
+- gatekeeping
+
+- accident prevention
+
+*finding 1*
+
+```text
+Expectations for code review at Google
+do not center around problem solving. Reviewing was
+introduced at Google to ensure code readability and
+maintainability. Today’s developers also perceive this
+educational aspect, in addition to maintaining norms,
+tracking history, gatekeeping, and accident prevention.
+Defect finding is welcomed but not the only focus
+```
+
+![Relationship diagram describing which themes of
+review expectations appeared primarily within a particular
+author/reviewer context](/static/images/se/htcr1.png)
+
+*finding 2*
+
+```text
+Expectations about a specific code review
+at Google depend on the work relationship between the
+author and reviewers.
+```
+
+## PRACTICES
+
+### Code Review Flow
+
+1. Creating
+
+2. Previewing
+
+3. Commenting
+
+4. Addressing Feedback
+
+5. Approving
+
+*finding 3*
+
+```text
+The Google code review process is aligned
+with the convergent practice of being lightweight and
+flexible. In contrast to other studied systems, however,
+ownership and readability are explicit and play a key
+role. The review tool includes reviewer recommendation and code analysis results
+```
+
+### Quantifying The Review Process
+
+- Review frequency and speed
+
+- Review size
+
+*finding 4*
+
+```text
+Code review at Google has converged to
+a process with markedly quicker reviews and smaller
+changes, compared to the other projects previously
+investigated. Moreover, one reviewer is often deemed
+as sufficient, compared to two in the other projects.
+```
+
+## DEVELOPERS' PERCEPTIONS
+
+Five main themes emerged from the analysis of our interview data
+
+- distance
+
+- social interactions
+
+- Review subject
+
+- context
+
+- Customization
+
+*finding 5*
+
+```text
+Despite years of refinement, code review at
+Google still faces breakdowns. These are mostly linked
+to the complexity of the interactions that occur around
+the reviews. Yet, code review is strongly considered a
+valuable process by developers, who spend around 3
+hours a week reviewing.
+```
+
+
+## Refs
+
+- [Modern Code Review: A Case Study at Google](https://sback.it/publications/icse2018seip.pdf)
