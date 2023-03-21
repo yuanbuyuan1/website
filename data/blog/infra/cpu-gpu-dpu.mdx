@@ -1,0 +1,56 @@
+---
+title: Introduction to CPU, GPU, DPU
+date: '2023-03-21'
+tags: ['infrastructure']
+draft: false
+summary: 'In this article we introduce CPU, GPU, DPU'
+canonicalUrl: https://github.com/wanglei4687/website/blob/main/data/blog/infra/cpu-gpu-dpu.mdx
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+
+## CPU
+
+A central processing unit (CPU), also called a central processor or main processor, is the most important processor in a given computer.
+Its electronic circuitry executes instructions of a computer program, such as arithmetic, logic, controlling, and input/output (I/O) operations. This role contrasts with that of external components, such as main memory and I/O circuitry,[1] and specialized coprocessors such as graphics processing units (GPUs).
+
+The form, design, and implementation of CPUs have changed over time, but their fundamental operation remains almost unchanged.
+Principal components of a CPU include the arithmetic–logic unit (ALU) that performs arithmetic and logic operations,
+processor registers that supply operands to the ALU and store the results of ALU operations, and a control unit that orchestrates the fetching (from memory), decoding and execution (of instructions) by directing the coordinated operations of the ALU, registers and other components.
+
+Most modern CPUs are implemented on integrated circuit (IC) microprocessors, with one or more CPUs on a single IC chip. Microprocessor chips with multiple CPUs are multi-core processors. The individual physical CPUs, processor cores, can also be multithreaded to create additional virtual or logical CPUs.
+
+An IC that contains a CPU may also contain memory, peripheral interfaces, and other components of a computer; such integrated devices are variously called microcontrollers or systems on a chip (SoC).
+
+Array processors or vector processors have multiple processors that operate in parallel, with no unit considered central. Virtual CPUs are an abstraction of dynamical aggregated computational resources.
+
+## GPU
+
+A graphics processing unit (GPU) is a specialized electronic circuit designed to manipulate and alter memory to accelerate the creation of images in a frame buffer intended for output to a display device. GPUs are used in embedded systems, mobile phones, personal computers, workstations, and game consoles.
+
+Modern GPUs are efficient at manipulating computer graphics and image processing.
+Their parallel structure makes them more efficient than general-purpose central processing units (CPUs) for algorithms that process large blocks of data in parallel. In a personal computer, a GPU can be present on a video card or embedded on the motherboard.
+In some CPUs, they are embedded on the CPU die.
+
+In the 1970s, the term "GPU" originally stood for graphics processor unit and described a programmable processing unit independently working from the CPU and responsible for graphics manipulation and output.
+Later, in 1994, Sony used the term (now standing for graphics processing unit) in reference to the PlayStation console's Toshiba-designed Sony GPU in 1994. The term was popularized by Nvidia in 1999, who marketed the GeForce 256 as "the world's first GPU".
+It was presented as a "single-chip processor with integrated transform, lighting, triangle setup/clipping, and rendering engines".
+Rival ATI Technologies coined the term "visual processing unit" or VPU with the release of the Radeon 9700 in 2002.
+
+## DPU
+
+A data processing unit (DPU) is a channel controller, a programmable specialized electronic circuit with hardware acceleration of data processing for data-centric computing.
+The data is transmitted to and from the component as multiplexed packets of information. A DPU generally contains a CPU, NIC and programmable data acceleration engines.
+This allows DPUs to have the generality and the programmability of central processing units while being specialized to operate efficiently on networking packets, storage requests or analytics requests.
+
+The data acceleration engines differentiates itself from a CPU by a larger degree of parallelism (required to process many requests) and from a GPU by a MIMD architecture rather than an SIMD architecture (required as each request needs to make different decisions and follow a different path through the chip).
+DPUs can be either ASIC-based, FPGA-based or SoC-based.
+DPUs have been increasingly used in data centers and supercomputers since their introduction in the 2010s due to the rise in use of data-centric computing, big data, security, and artificial intelligence/machine learning/deep learning.
+DPUs are designed to be independent infrastructure endpoints
+
+## Refs
+
+- https://en.wikipedia.org/wiki/Central_processing_unit
+- https://en.wikipedia.org/wiki/Graphics_processing_unit
+- https://en.wikipedia.org/wiki/Data_processing_unit
